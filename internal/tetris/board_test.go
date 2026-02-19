@@ -39,7 +39,7 @@ func TestIsColliding(t *testing.T) {
 		},
 		{
 			name:     "collision with occupied cell",
-			board:    func() *Board { b := NewBoard(10, 20); b.Grid[6][5] = 1; return b }(),
+			board:    func() *Board { b := NewBoard(10, 20); b.grid[6][5] = 1; return b }(),
 			piece:    &Piece{X: 5, Y: 5, Shape: ShapeI},
 			expected: true,
 		},
@@ -86,7 +86,7 @@ func TestLockPiece(t *testing.T) {
 			tt.board.LockPiece(tt.piece)
 			for y, row := range tt.expectedGrid {
 				for x, expectedColor := range row {
-					assert.Equal(t, expectedColor, tt.board.Grid[y][x])
+					assert.Equal(t, expectedColor, tt.board.grid[y][x])
 				}
 			}
 		})
@@ -104,8 +104,8 @@ func TestClearFullLines(t *testing.T) {
 			name: "no full lines",
 			board: func() *Board {
 				b := NewBoard(5, 5)
-				b.Grid[4][0] = 1
-				b.Grid[4][1] = 1
+				b.grid[4][0] = 1
+				b.grid[4][1] = 1
 				return b
 			}(),
 			expectedCleared: 0,
@@ -121,11 +121,11 @@ func TestClearFullLines(t *testing.T) {
 			name: "single full line at bottom",
 			board: func() *Board {
 				b := NewBoard(5, 5)
-				b.Grid[4][0] = 1
-				b.Grid[4][1] = 1
-				b.Grid[4][2] = 1
-				b.Grid[4][3] = 1
-				b.Grid[4][4] = 1
+				b.grid[4][0] = 1
+				b.grid[4][1] = 1
+				b.grid[4][2] = 1
+				b.grid[4][3] = 1
+				b.grid[4][4] = 1
 				return b
 			}(),
 			expectedCleared: 1,
@@ -141,13 +141,13 @@ func TestClearFullLines(t *testing.T) {
 			name: "full line with data above",
 			board: func() *Board {
 				b := NewBoard(3, 4)
-				b.Grid[1][0] = 1
-				b.Grid[2][0] = 1
-				b.Grid[2][1] = 1
-				b.Grid[2][2] = 1
-				b.Grid[3][0] = 2
-				b.Grid[3][1] = 2
-				b.Grid[3][2] = 2
+				b.grid[1][0] = 1
+				b.grid[2][0] = 1
+				b.grid[2][1] = 1
+				b.grid[2][2] = 1
+				b.grid[3][0] = 2
+				b.grid[3][1] = 2
+				b.grid[3][2] = 2
 				return b
 			}(),
 			expectedCleared: 2,
@@ -166,7 +166,7 @@ func TestClearFullLines(t *testing.T) {
 			assert.Equal(t, tt.expectedCleared, cleared)
 			for y, row := range tt.expectedGrid {
 				for x, expectedValue := range row {
-					assert.Equal(t, expectedValue, tt.board.Grid[y][x])
+					assert.Equal(t, expectedValue, tt.board.grid[y][x])
 				}
 			}
 		})

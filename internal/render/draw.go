@@ -24,7 +24,7 @@ func DrawBlock(screen *ebiten.Image, x, y int, rectangleColor color.Color) {
 func DrawBoard(screen *ebiten.Image, board *tetris.Board, offsetX, offsetY int) {
 	for y := 0; y < board.Height; y++ {
 		for x := 0; x < board.Width; x++ {
-			cellValue := board.Grid[y][x]
+			cellValue := board.Cell(x, y)
 
 			bgColor := color.RGBA{R: 20, G: 20, B: 30, A: 255}
 			DrawBlock(screen, offsetX+x, offsetY+y, bgColor)
