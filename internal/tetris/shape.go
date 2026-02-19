@@ -21,7 +21,7 @@ var shapes = map[ShapeType][][]Cell{
 	},
 	ShapeO: {
 		// Only 1 rotation (square)
-		{{X: 1, Y: 1}, {X: 2, Y: 1}, {X: 1, Y: 2}, {X: 2, Y: 2}},
+		{{X: 0, Y: 0}, {X: 1, Y: 0}, {X: 0, Y: 1}, {X: 1, Y: 1}},
 	},
 	ShapeT: {
 		// Rotation 0: T pointing up
