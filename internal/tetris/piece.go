@@ -14,6 +14,16 @@ const (
 	PieceOrange
 )
 
+var shapeColors = map[ShapeType]PieceColor{
+	ShapeI: PieceCyan,
+	ShapeO: PieceYellow,
+	ShapeT: PieceMagenta,
+	ShapeS: PieceGreen,
+	ShapeZ: PieceRed,
+	ShapeJ: PieceBlue,
+	ShapeL: PieceOrange,
+}
+
 var PieceColors = map[PieceColor]color.Color{
 	PieceRed:     color.RGBA{R: 255, G: 0, B: 0, A: 255},
 	PieceGreen:   color.RGBA{R: 0, G: 255, B: 0, A: 255},
@@ -43,10 +53,10 @@ type Cell struct {
 	X, Y int
 }
 
-func NewPiece(shape ShapeType, color PieceColor, posX, posY, rotation int) *Piece {
+func NewPiece(shape ShapeType, posX, posY, rotation int) *Piece {
 	return &Piece{
 		Shape:    shape,
-		Color:    color,
+		Color:    shapeColors[shape],
 		X:        posX,
 		Y:        posY,
 		Rotation: rotation,

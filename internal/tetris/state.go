@@ -40,8 +40,7 @@ func NewGameState(width, height int) *GameState {
 
 func spawnRandomPiece(spawnX, spawnY int) *Piece {
 	shape := ShapeType(rand.IntN(7))
-	color := PieceColor(rand.IntN(7) + 1)            // Colors start from 1
-	return NewPiece(shape, color, spawnX, spawnY, 0) // Start near the top center
+	return NewPiece(shape, spawnX, spawnY, 0) // Start near the top center
 }
 
 func (gs *GameState) Update() {
