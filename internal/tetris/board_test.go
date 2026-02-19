@@ -7,6 +7,8 @@ import (
 )
 
 func TestIsColliding(t *testing.T) {
+	t.Parallel()
+
 	tests := []struct {
 		name     string
 		board    *Board
@@ -53,6 +55,8 @@ func TestIsColliding(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			result := tt.board.IsColliding(tt.piece, 0, 0)
 			assert.Equal(t, tt.expected, result)
 		})
@@ -60,6 +64,8 @@ func TestIsColliding(t *testing.T) {
 }
 
 func TestLockPiece(t *testing.T) {
+	t.Parallel()
+
 	tests := []struct {
 		name          string
 		board         *Board
@@ -83,6 +89,8 @@ func TestLockPiece(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			tt.board.LockPiece(tt.piece)
 			for y, row := range tt.expectedGrid {
 				for x, expectedColor := range row {
@@ -94,6 +102,8 @@ func TestLockPiece(t *testing.T) {
 }
 
 func TestClearFullLines(t *testing.T) {
+	t.Parallel()
+
 	tests := []struct {
 		name            string
 		board           *Board
@@ -162,6 +172,8 @@ func TestClearFullLines(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			cleared := tt.board.ClearFullLines()
 			assert.Equal(t, tt.expectedCleared, cleared)
 			for y, row := range tt.expectedGrid {

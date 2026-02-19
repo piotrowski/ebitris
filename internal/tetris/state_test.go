@@ -7,6 +7,8 @@ import (
 )
 
 func TestLevel(t *testing.T) {
+	t.Parallel()
+
 	tests := []struct {
 		name          string
 		linesCleared  int
@@ -26,6 +28,8 @@ func TestLevel(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			gs := NewGameState(10, 20)
 			gs.LinesCleared = tt.linesCleared
 			assert.Equal(t, tt.expectedLevel, gs.Level())
@@ -34,6 +38,8 @@ func TestLevel(t *testing.T) {
 }
 
 func TestUpdate(t *testing.T) {
+	t.Parallel()
+
 	tests := []struct {
 		name         string
 		status       Status
@@ -73,6 +79,8 @@ func TestUpdate(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			gs := NewGameState(10, 20)
 			gs.Status = tt.status
 			gs.FrameCount = tt.frameCount
@@ -87,6 +95,8 @@ func TestUpdate(t *testing.T) {
 }
 
 func TestAddScore(t *testing.T) {
+	t.Parallel()
+
 	tests := []struct {
 		name                 string
 		linesCleared         int
@@ -133,6 +143,8 @@ func TestAddScore(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			gs := NewGameState(10, 20)
 			gs.LinesCleared = tt.currentLinesCleared
 			gs.addScore(tt.linesCleared)
@@ -143,6 +155,8 @@ func TestAddScore(t *testing.T) {
 }
 
 func TestLockCurrentPiece(t *testing.T) {
+	t.Parallel()
+
 	gs := NewGameState(10, 20)
 	originalNextPiece := gs.NextPiece
 	gs.lockCurrentPiece()
