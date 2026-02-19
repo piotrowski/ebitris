@@ -41,8 +41,7 @@ func (s *GameplayScene) Update() error {
 		s.hardDrop()
 	}
 	if s.input.IsKeyJustPressed(ebiten.KeyEscape) {
-		s.state.Status = tetris.StatusPaused
-		s.manager.SwitchTo(NewPauseScene(s.manager, s))
+		s.manager.SwitchTo(NewPauseScene(s.manager))
 		return nil
 	}
 
@@ -88,7 +87,6 @@ func (s *GameplayScene) hardDrop() {
 func (s *GameplayScene) Draw(screen *ebiten.Image) {
 	screen.Fill(color.RGBA{R: 10, G: 10, B: 20, A: 255})
 
-	// Draw board at offset
 	offsetX, offsetY := 5, 2
 	render.DrawBoard(screen, s.state.Board, offsetX, offsetY)
 	render.DrawPiece(screen, s.state.CurrentPiece, offsetX, offsetY)
@@ -99,15 +97,14 @@ func (s *GameplayScene) Draw(screen *ebiten.Image) {
 	render.DrawText(screen, fmt.Sprintf("Level: %d", s.state.Level()), 10, 45, font)
 	render.DrawText(screen, fmt.Sprintf("Lines: %d", s.state.LinesCleared), 10, 60, font)
 
-	// Draw next piece preview
 	render.DrawText(screen, "Next:", 470, 200, font)
 	render.DrawPiece(screen, s.state.NextPiece, 13, 8)
 }
 
 func (s *GameplayScene) OnEnter() {
-	// Initialize or resume
+	s.state.Resume()
 }
 
 func (s *GameplayScene) OnExit() {
-	// Cleanup if needed
+	s.state.Pause()
 }

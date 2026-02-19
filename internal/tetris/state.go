@@ -18,7 +18,7 @@ type GameState struct {
 	Score        int
 	LinesCleared int
 
-	Status Status
+	status Status
 
 	FrameCount   int
 	GravityDelay int // Frames between auto-drops
@@ -28,13 +28,21 @@ func (gs *GameState) Level() int {
 	return gs.LinesCleared / 10
 }
 
+func (gs *GameState) Pause() {
+	gs.status = StatusPaused
+}
+
+func (gs *GameState) Resume() {
+	gs.status = StatusPlaying
+}
+
 func NewGameState(width, height int) *GameState {
 	return &GameState{
 		Board:        NewBoard(width, height),
 		CurrentPiece: spawnRandomPiece(width/2-2, 0),
 		NextPiece:    spawnRandomPiece(width/2-2, 0),
 		GravityDelay: 48, // ~0.8 seconds at 60 FPS
-		Status:       StatusPlaying,
+		status:       StatusPlaying,
 	}
 }
 
@@ -44,7 +52,7 @@ func spawnRandomPiece(spawnX, spawnY int) *Piece {
 }
 
 func (gs *GameState) Update() {
-	if gs.Status != StatusPlaying {
+	if gs.status != StatusPlaying {
 		return
 	}
 
@@ -80,7 +88,7 @@ func (gs *GameState) lockCurrentPiece() {
 
 	// Check game over
 	if gs.Board.IsGameOver() {
-		gs.Status = StatusGameOver
+		gs.status = StatusGameOver
 	}
 }
 

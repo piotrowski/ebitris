@@ -82,7 +82,7 @@ func TestUpdate(t *testing.T) {
 			t.Parallel()
 
 			gs := NewGameState(10, 20)
-			gs.Status = tt.status
+			gs.status = tt.status
 			gs.FrameCount = tt.frameCount
 			gs.GravityDelay = tt.gravityDelay
 			originalY := gs.CurrentPiece.Y
