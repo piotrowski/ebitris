@@ -31,6 +31,9 @@ func (s *PauseScene) Update() error {
 
 func (s *PauseScene) Draw(screen *ebiten.Image) {
 	s.gameplay.Draw(screen)
+
+	font := render.GetDefaultFont(render.FontLarge)
+
 	render.DrawText(screen, "PAUSED", 260, 400, font)
 }
 

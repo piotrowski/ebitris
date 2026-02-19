@@ -4,10 +4,9 @@ import (
 	"image/color"
 
 	"github.com/hajimehoshi/ebiten/v2"
-	"github.com/hajimehoshi/ebiten/v2/text"
+	"github.com/hajimehoshi/ebiten/v2/text/v2"
 	"github.com/hajimehoshi/ebiten/v2/vector"
 	"github.com/piotrowski/ebitris/internal/tetris"
-	"golang.org/x/image/font"
 )
 
 const BlockSize = 30
@@ -51,6 +50,9 @@ func DrawPiece(screen *ebiten.Image, piece *tetris.Piece, offsetX, offsetY int) 
 	}
 }
 
-func DrawText(screen *ebiten.Image, textToDraw string, x, y int, fontFace font.Face) {
-	text.Draw(screen, textToDraw, fontFace, x, y, color.White)
+func DrawText(screen *ebiten.Image, textToDraw string, x, y int, fontFace text.Face) {
+	op := &text.DrawOptions{}
+	op.GeoM.Translate(float64(x), float64(y))
+
+	text.Draw(screen, textToDraw, fontFace, op)
 }

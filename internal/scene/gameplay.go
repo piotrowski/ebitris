@@ -8,10 +8,7 @@ import (
 	"github.com/piotrowski/ebitris/internal/input"
 	"github.com/piotrowski/ebitris/internal/render"
 	"github.com/piotrowski/ebitris/internal/tetris"
-	"golang.org/x/image/font/basicfont"
 )
-
-var font = basicfont.Face7x13
 
 type GameplayScene struct {
 	manager *Manager
@@ -96,7 +93,8 @@ func (s *GameplayScene) Draw(screen *ebiten.Image) {
 	render.DrawBoard(screen, s.state.Board, offsetX, offsetY)
 	render.DrawPiece(screen, s.state.CurrentPiece, offsetX, offsetY)
 
-	// Draw UI
+	font := render.GetDefaultFont(render.FontMedium)
+
 	render.DrawText(screen, fmt.Sprintf("Score: %d", s.state.Score), 10, 30, font)
 	render.DrawText(screen, fmt.Sprintf("Level: %d", s.state.Level()), 10, 45, font)
 	render.DrawText(screen, fmt.Sprintf("Lines: %d", s.state.LinesCleared), 10, 60, font)
