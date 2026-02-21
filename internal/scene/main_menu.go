@@ -27,7 +27,7 @@ func (s *MainMenuScene) Update() error {
 		case 0:
 			s.manager.SwitchTo(NewStandardGameplayScene(s.manager))
 		case 1:
-			// s.manager.SwitchTo(NewScoreboardScene(s.manager))
+			s.manager.SwitchTo(NewScoreboardScene(s.manager))
 		case 2:
 			s.manager.Quit()
 		}

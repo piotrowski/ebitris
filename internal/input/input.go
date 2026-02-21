@@ -28,6 +28,10 @@ func (im *InputManager) IsKeyPressed(key ebiten.Key) bool {
 	return ebiten.IsKeyPressed(key)
 }
 
+func (im *InputManager) GetJustPressedKeys() []ebiten.Key {
+	return inpututil.AppendJustPressedKeys(nil)
+}
+
 func (im *InputManager) ShouldMove(key ebiten.Key) bool {
 	if im.IsKeyJustPressed(key) {
 		im.keyHoldTime[key] = 0

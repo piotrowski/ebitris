@@ -50,7 +50,7 @@ func (s *GameplayScene) Update() error {
 	}
 
 	if s.state.IsGameOver() {
-		s.manager.SwitchTo(NewGameOverScene(s.manager, s.state.GetScore()))
+		s.manager.SwitchTo(NewGameOverScene(s.manager, s.state.GetScore(), s.state.GetLevel(), s.state.GetLinesCleared()))
 		return nil
 	}
 

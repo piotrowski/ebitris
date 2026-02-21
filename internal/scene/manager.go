@@ -1,17 +1,28 @@
 package scene
 
-import "github.com/hajimehoshi/ebiten/v2"
+import (
+	"github.com/hajimehoshi/ebiten/v2"
+	"github.com/piotrowski/ebitris/internal/persistence"
+)
+
+type ScoreManager interface {
+	SaveScore(initials string, score, level, lines int)
+	GetPage(page int, size int) ([]persistence.ScoreEntry, bool)
+}
 
 type Manager struct {
 	prev    Scene
 	current Scene
 	next    Scene
 
-	quit bool
+	quit         bool
+	scoreManager ScoreManager
 }
 
 func NewManager() *Manager {
-	return &Manager{}
+	return &Manager{
+		scoreManager: persistence.NewScoreManager(),
+	}
 }
 
 func (m *Manager) SwitchTo(scene Scene) {

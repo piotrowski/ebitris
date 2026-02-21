@@ -126,11 +126,31 @@ func (gs *GameState) MoveDown() bool {
 
 func (gs *GameState) Rotate() bool {
 	oldRotation := gs.currentPiece.Rotation
+	oldPositionX := gs.currentPiece.X
+	oldPositionY := gs.currentPiece.Y
 	gs.currentPiece.Rotate()
+
 	if gs.board.IsColliding(gs.currentPiece, 0, 0) {
+
+		// Wall kicks: try shifting the piece left or right to see if it can fit after rotation
+		for _, offset := range []struct{ X, Y int }{
+			{X: 1, Y: 0},  // Right
+			{X: -1, Y: 0}, // Left
+		} {
+			if !gs.board.IsColliding(gs.currentPiece, offset.X, offset.Y) {
+				gs.currentPiece.X += offset.X
+				gs.currentPiece.Y += offset.Y
+				return true
+			}
+		}
+
+		// Rotation is not possible, revert to original state
+		gs.currentPiece.X = oldPositionX
+		gs.currentPiece.Y = oldPositionY
 		gs.currentPiece.Rotation = oldRotation
 		return false
 	}
+
 	return true
 }
 
