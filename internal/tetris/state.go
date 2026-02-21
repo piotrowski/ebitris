@@ -154,6 +154,16 @@ func (gs *GameState) Rotate() bool {
 	return true
 }
 
+func (gs *GameState) GetShadowPiece() *Piece {
+	shadowPiece := gs.currentPiece.Clone()
+	for !gs.board.IsColliding(shadowPiece, 0, 1) {
+		shadowPiece.MoveDown()
+	}
+
+	shadowPiece.Color = PieceShadow
+	return shadowPiece
+}
+
 func (gs *GameState) HardDrop() {
 	for !gs.board.IsColliding(gs.currentPiece, 0, 1) {
 		gs.currentPiece.MoveDown()

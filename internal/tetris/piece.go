@@ -12,6 +12,7 @@ const (
 	PieceCyan
 	PieceMagenta
 	PieceOrange
+	PieceShadow
 )
 
 var shapeColors = map[ShapeType]PieceColor{
@@ -32,6 +33,7 @@ var PieceColors = map[PieceColor]color.Color{
 	PieceCyan:    color.RGBA{R: 0, G: 255, B: 255, A: 255},
 	PieceMagenta: color.RGBA{R: 255, G: 0, B: 255, A: 255},
 	PieceOrange:  color.RGBA{R: 255, G: 165, B: 0, A: 255},
+	PieceShadow:  color.RGBA{R: 40, G: 40, B: 50, A: 255},
 }
 
 func GetPieceColor[T ~int](c T) color.Color {
@@ -60,6 +62,16 @@ func NewPiece(shape ShapeType, posX, posY, rotation int) *Piece {
 		X:        posX,
 		Y:        posY,
 		Rotation: rotation,
+	}
+}
+
+func (p *Piece) Clone() *Piece {
+	return &Piece{
+		Shape:    p.Shape,
+		Color:    p.Color,
+		X:        p.X,
+		Y:        p.Y,
+		Rotation: p.Rotation,
 	}
 }
 

@@ -65,6 +65,7 @@ func (s *GameplayScene) Draw(screen *ebiten.Image) {
 	offsetX, offsetY := 4, 2
 	render.DrawBoard(screen, s.state.GetBoard(), offsetX, offsetY)
 	render.DrawPiece(screen, s.state.GetCurrentPiece(), offsetX, offsetY)
+	render.DrawPiece(screen, s.state.GetShadowPiece(), offsetX, offsetY)
 
 	font := render.GetDefaultFont(render.FontMedium)
 
