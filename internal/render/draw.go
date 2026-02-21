@@ -41,6 +41,11 @@ func DrawPiece(screen *ebiten.Image, piece *tetris.Piece, offsetX, offsetY int) 
 	colorPiece := tetris.GetPieceColor(piece.Color)
 
 	for _, cell := range piece.GetCells() {
+		// Do not draw cells that are above the visible area
+		if piece.Y+cell.Y < 0 {
+			continue
+		}
+
 		x := piece.X + cell.X + offsetX
 		y := piece.Y + cell.Y + offsetY
 

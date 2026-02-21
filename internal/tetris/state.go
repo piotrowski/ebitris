@@ -63,7 +63,7 @@ func (gs *GameState) IsGameOver() bool {
 func NewGameState(width, height int) *GameState {
 	return &GameState{
 		board:        NewBoard(width, height),
-		currentPiece: spawnRandomPiece(width/2-2, 0),
+		currentPiece: spawnRandomPiece(width/2-2, -2),
 		nextPiece:    spawnRandomPiece(width/2-2, 0),
 		gravityDelay: 48, // ~0.8 seconds at 60 FPS
 		status:       StatusPlaying,
@@ -158,12 +158,14 @@ func (gs *GameState) lockCurrentPiece() {
 		gs.addScore(linesCleared)
 	}
 
-	if gs.board.IsGameOver(gs.nextPiece) {
+	gs.currentPiece = gs.nextPiece
+	gs.currentPiece.Y = -2
+	gs.nextPiece = spawnRandomPiece(gs.board.Width/2-2, 0)
+
+	if gs.board.IsGameOver() {
 		gs.status = StatusGameOver
 		return
 	}
-	gs.currentPiece = gs.nextPiece
-	gs.nextPiece = spawnRandomPiece(gs.board.Width/2-2, 0)
 }
 
 func (gs *GameState) addScore(linesCleared int) {

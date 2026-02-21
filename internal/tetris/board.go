@@ -31,11 +31,11 @@ func (b *Board) IsColliding(piece *Piece, offsetX, offsetY int) bool {
 			return true
 		}
 
-		if y < 0 || y >= b.Height {
+		if y >= b.Height {
 			return true
 		}
 
-		if b.grid[y][x] != 0 {
+		if y >= 0 && b.grid[y][x] != 0 {
 			return true
 		}
 	}
@@ -83,17 +83,11 @@ func (b *Board) removeLine(lineY int) {
 }
 
 // IsGameOver checks if any cells in the top row are occupied, which indicates game over.
-// Additionally, it checks if the new piece is colliding with existing pieces at its spawn position.
-// As this would mean the new piece cannot be placed, it also indicates game over.
-func (b *Board) IsGameOver(newPiece *Piece) bool {
+func (b *Board) IsGameOver() bool {
 	for x := 0; x < b.Width; x++ {
 		if b.grid[0][x] != 0 {
 			return true
 		}
-	}
-
-	if b.IsColliding(newPiece, 0, 0) {
-		return true
 	}
 	return false
 }
