@@ -51,8 +51,13 @@ func DrawPiece(screen *ebiten.Image, piece *tetris.Piece, offsetX, offsetY int) 
 }
 
 func DrawText(screen *ebiten.Image, textToDraw string, x, y int, fontFace text.Face) {
+	_, height := text.Measure(textToDraw, fontFace, 0)
 	op := &text.DrawOptions{}
-	op.GeoM.Translate(float64(x*BlockSize), float64(y*BlockSize))
+	op.GeoM.Translate(float64(x*BlockSize), float64(y*BlockSize+int(BlockSize/2)-int(height/2)))
 
 	text.Draw(screen, textToDraw, fontFace, op)
+}
+
+func DrawRectangle(screen *ebiten.Image, x, y int, width, height int, color color.Color) {
+	vector.FillRect(screen, float32(x*BlockSize), float32(y*BlockSize), float32(width*BlockSize), float32(height*BlockSize), color, true)
 }

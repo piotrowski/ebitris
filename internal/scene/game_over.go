@@ -24,7 +24,7 @@ func NewGameOverScene(manager *Manager, score int) *GameOverScene {
 
 func (s *GameOverScene) Update() error {
 	if s.input.IsKeyJustPressed(ebiten.KeyR) {
-		// s.manager.SwitchTo()
+		s.manager.SwitchTo(NewMainMenuScene(s.manager))
 	}
 	return nil
 }

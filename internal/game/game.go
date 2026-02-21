@@ -28,7 +28,7 @@ func Start() error {
 	ebiten.SetWindowTitle("Ebitris")
 
 	manager := scene.NewManager()
-	manager.SwitchTo(scene.NewGameplayScene(manager, 10, 20))
+	manager.SwitchTo(scene.NewMainMenuScene(manager))
 
 	if err := ebiten.RunGame(&Game{
 		manager: manager,

@@ -6,6 +6,8 @@ type Manager struct {
 	prev    Scene
 	current Scene
 	next    Scene
+
+	quit bool
 }
 
 func NewManager() *Manager {
@@ -23,6 +25,10 @@ func (m *Manager) SwitchBack() {
 }
 
 func (m *Manager) Update() error {
+	if m.quit {
+		return ebiten.Termination
+	}
+
 	if m.next != nil {
 		if m.current != nil {
 			m.current.OnExit()
@@ -43,4 +49,8 @@ func (m *Manager) Draw(screen *ebiten.Image) {
 	if m.current != nil {
 		m.current.Draw(screen)
 	}
+}
+
+func (m *Manager) Quit() {
+	m.quit = true
 }

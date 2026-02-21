@@ -16,6 +16,10 @@ type GameplayScene struct {
 	input   *input.InputManager
 }
 
+func NewStandardGameplayScene(manager *Manager) *GameplayScene {
+	return NewGameplayScene(manager, 10, 20)
+}
+
 func NewGameplayScene(manager *Manager, width, height int) *GameplayScene {
 	return &GameplayScene{
 		manager: manager,
