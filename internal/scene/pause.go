@@ -28,7 +28,7 @@ func (s *PauseScene) Update() error {
 func (s *PauseScene) Draw(screen *ebiten.Image) {
 	font := render.GetDefaultFont(render.FontLarge)
 
-	render.DrawText(screen, "PAUSED", 260, 400, font)
+	render.DrawText(screen, "PAUSED", 5, 5, font)
 }
 
 func (s *PauseScene) OnEnter() {}

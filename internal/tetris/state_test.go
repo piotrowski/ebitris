@@ -15,14 +15,14 @@ func TestLevel(t *testing.T) {
 		expectedLevel int
 	}{
 		{
-			name:          "level 0 with no lines cleared",
+			name:          "level 1 with no lines cleared",
 			linesCleared:  0,
-			expectedLevel: 0,
+			expectedLevel: 1,
 		},
 		{
-			name:          "level 1 with 10 lines cleared",
+			name:          "level 2 with 10 lines cleared",
 			linesCleared:  10,
-			expectedLevel: 1,
+			expectedLevel: 2,
 		},
 	}
 
@@ -137,7 +137,7 @@ func TestAddScore(t *testing.T) {
 			linesCleared:         1,
 			currentLinesCleared:  9,
 			expectedScore:        100,
-			expectedGravityDelay: 46,
+			expectedGravityDelay: 42,
 		},
 	}
 
@@ -314,13 +314,12 @@ func TestHardDrop(t *testing.T) {
 
 	gs := NewGameState(10, 20)
 	gs.currentPiece = NewPiece(ShapeO, 4, 0, 0)
+	piece := gs.currentPiece
 	gs.HardDrop()
 
 	// ShapeO cells at relative Y=1,2; board height=20.
 	// Lowest valid pieceY: 17 (abs rows 18,19 are in bounds; abs row 20 would be out).
-	assert.Equal(t, 18, gs.currentPiece.Y)
-	// Moving down further should be blocked
-	assert.False(t, gs.MoveDown())
+	assert.Equal(t, 18, piece.Y)
 }
 
 func TestLockCurrentPiece(t *testing.T) {
@@ -328,6 +327,7 @@ func TestLockCurrentPiece(t *testing.T) {
 
 	gs := NewGameState(10, 20)
 	originalNextPiece := gs.nextPiece
+	gs.currentPiece = NewPiece(ShapeO, 4, 18, 0)
 	gs.lockCurrentPiece()
 	assert.Equal(t, originalNextPiece, gs.currentPiece)
 	assert.NotEqual(t, originalNextPiece, gs.nextPiece)

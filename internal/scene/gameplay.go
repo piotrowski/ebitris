@@ -45,7 +45,11 @@ func (s *GameplayScene) Update() error {
 		return nil
 	}
 
-	// Update game state (gravity, etc.)
+	if s.state.IsGameOver() {
+		s.manager.SwitchTo(NewGameOverScene(s.manager, s.state.GetScore()))
+		return nil
+	}
+
 	s.state.Update()
 
 	return nil
@@ -54,18 +58,18 @@ func (s *GameplayScene) Update() error {
 func (s *GameplayScene) Draw(screen *ebiten.Image) {
 	screen.Fill(color.RGBA{R: 10, G: 10, B: 20, A: 255})
 
-	offsetX, offsetY := 5, 2
+	offsetX, offsetY := 4, 2
 	render.DrawBoard(screen, s.state.GetBoard(), offsetX, offsetY)
 	render.DrawPiece(screen, s.state.GetCurrentPiece(), offsetX, offsetY)
 
 	font := render.GetDefaultFont(render.FontMedium)
 
-	render.DrawText(screen, fmt.Sprintf("Score: %d", s.state.GetScore()), 10, 30, font)
-	render.DrawText(screen, fmt.Sprintf("Level: %d", s.state.GetLevel()), 10, 45, font)
-	render.DrawText(screen, fmt.Sprintf("Lines: %d", s.state.GetLinesCleared()), 10, 60, font)
+	render.DrawText(screen, fmt.Sprintf("Score: %d", s.state.GetScore()), 1, 3, font)
+	render.DrawText(screen, fmt.Sprintf("Level: %d", s.state.GetLevel()), 1, 4, font)
+	render.DrawText(screen, fmt.Sprintf("Lines: %d", s.state.GetLinesCleared()), 1, 5, font)
 
-	render.DrawText(screen, "Next:", 470, 200, font)
-	render.DrawPiece(screen, s.state.GetNextPiece(), 13, 8)
+	render.DrawText(screen, "Next:", 16, 7, font)
+	render.DrawPiece(screen, s.state.GetNextPiece(), 12, 9)
 }
 
 func (s *GameplayScene) OnEnter() {

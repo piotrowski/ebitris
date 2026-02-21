@@ -52,7 +52,7 @@ func DrawPiece(screen *ebiten.Image, piece *tetris.Piece, offsetX, offsetY int) 
 
 func DrawText(screen *ebiten.Image, textToDraw string, x, y int, fontFace text.Face) {
 	op := &text.DrawOptions{}
-	op.GeoM.Translate(float64(x), float64(y))
+	op.GeoM.Translate(float64(x*BlockSize), float64(y*BlockSize))
 
 	text.Draw(screen, textToDraw, fontFace, op)
 }

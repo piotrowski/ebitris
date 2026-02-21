@@ -25,7 +25,7 @@ type GameState struct {
 }
 
 func (gs *GameState) GetLevel() int {
-	return gs.linesCleared / 10
+	return (gs.linesCleared / 10) + 1
 }
 
 func (gs *GameState) GetLinesCleared() int {
@@ -56,6 +56,10 @@ func (gs *GameState) Resume() {
 	gs.status = StatusPlaying
 }
 
+func (gs *GameState) IsGameOver() bool {
+	return gs.status == StatusGameOver
+}
+
 func NewGameState(width, height int) *GameState {
 	return &GameState{
 		board:        NewBoard(width, height),
@@ -70,18 +74,18 @@ var lastPieceID int
 
 func pickRandomPiece() ShapeType {
 	for i := 0; i < 2; i++ {
-		id := rand.IntN(7)
+		id := rand.IntN(len(shapes))
 		if id != lastPieceID {
 			lastPieceID = id
 			return ShapeType(id)
 		}
 	}
-	return ShapeType(rand.IntN(7))
+	return ShapeType(rand.IntN(len(shapes)))
 }
 
 func spawnRandomPiece(spawnX, spawnY int) *Piece {
 	shape := pickRandomPiece()
-	return NewPiece(shape, spawnX, spawnY, 0) // Start near the top center
+	return NewPiece(shape, spawnX, spawnY, 0)
 }
 
 func (gs *GameState) Update() {
@@ -89,7 +93,6 @@ func (gs *GameState) Update() {
 		return
 	}
 
-	// Apply gravity
 	gs.frameCount++
 	if gs.frameCount >= gs.gravityDelay {
 		gs.frameCount = 0
@@ -135,6 +138,7 @@ func (gs *GameState) HardDrop() {
 	for !gs.board.IsColliding(gs.currentPiece, 0, 1) {
 		gs.currentPiece.MoveDown()
 	}
+	gs.lockCurrentPiece()
 }
 
 func (gs *GameState) applyGravity() {
@@ -149,20 +153,17 @@ func (gs *GameState) applyGravity() {
 func (gs *GameState) lockCurrentPiece() {
 	gs.board.LockPiece(gs.currentPiece)
 
-	// Clear lines
 	linesCleared := gs.board.ClearFullLines()
 	if linesCleared > 0 {
 		gs.addScore(linesCleared)
 	}
 
-	// Spawn next piece
+	if gs.board.IsGameOver(gs.nextPiece) {
+		gs.status = StatusGameOver
+		return
+	}
 	gs.currentPiece = gs.nextPiece
 	gs.nextPiece = spawnRandomPiece(gs.board.Width/2-2, 0)
-
-	// Check game over
-	if gs.board.IsGameOver() {
-		gs.status = StatusGameOver
-	}
 }
 
 func (gs *GameState) addScore(linesCleared int) {
@@ -174,11 +175,11 @@ func (gs *GameState) addScore(linesCleared int) {
 	}
 
 	currentLevel := gs.GetLevel()
-	gs.score += points[linesCleared] * (currentLevel + 1)
+	gs.score += points[linesCleared] * (currentLevel)
 	gs.linesCleared += linesCleared
 
 	newLevel := gs.GetLevel()
 	if newLevel > currentLevel {
-		gs.gravityDelay = max(10, 48-newLevel*2)
+		gs.gravityDelay = max(5, 48-newLevel*3)
 	}
 }
