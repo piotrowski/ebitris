@@ -75,7 +75,7 @@ func (sm *ScoreManager) saveScore() error {
 		return err
 	}
 
-	err = os.WriteFile("scores.json", jsonData, 0644)
+	err = os.WriteFile(saveFile, jsonData, 0644)
 	if err != nil {
 		return err
 	}

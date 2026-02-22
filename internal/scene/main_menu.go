@@ -3,6 +3,7 @@ package scene
 import (
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/piotrowski/ebitris/internal/input"
+	"github.com/piotrowski/ebitris/internal/music"
 	"github.com/piotrowski/ebitris/internal/render"
 	"github.com/piotrowski/ebitris/internal/ui"
 )
@@ -42,5 +43,7 @@ func (s *MainMenuScene) Draw(screen *ebiten.Image) {
 	s.menu.Draw(screen, 5, 10)
 }
 
-func (s *MainMenuScene) OnEnter() {}
-func (s *MainMenuScene) OnExit()  {}
+func (s *MainMenuScene) OnEnter() {
+	s.manager.audioManager.PlaySong(music.ReturnOfThe8BitEra)
+}
+func (s *MainMenuScene) OnExit() {}

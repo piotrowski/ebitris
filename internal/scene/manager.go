@@ -2,12 +2,22 @@ package scene
 
 import (
 	"github.com/hajimehoshi/ebiten/v2"
+	"github.com/piotrowski/ebitris/internal/music"
 	"github.com/piotrowski/ebitris/internal/persistence"
 )
 
 type ScoreManager interface {
 	SaveScore(initials string, score, level, lines int)
 	GetPage(page int, size int) ([]persistence.ScoreEntry, bool)
+}
+
+type AudioManager interface {
+	PlaySong(name music.SongName)
+	StartAutoPlay()
+	StopAutoPlay()
+	SetPlaylist(names ...music.SongName)
+
+	PlayEffect(name music.EffectName)
 }
 
 type Manager struct {
@@ -17,11 +27,13 @@ type Manager struct {
 
 	quit         bool
 	scoreManager ScoreManager
+	audioManager AudioManager
 }
 
 func NewManager() *Manager {
 	return &Manager{
 		scoreManager: persistence.NewScoreManager(),
+		audioManager: music.NewManager(),
 	}
 }
 

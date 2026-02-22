@@ -6,6 +6,7 @@ import (
 
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/piotrowski/ebitris/internal/input"
+	"github.com/piotrowski/ebitris/internal/music"
 	"github.com/piotrowski/ebitris/internal/render"
 	"github.com/piotrowski/ebitris/internal/tetris"
 )
@@ -43,6 +44,7 @@ func (s *GameplayScene) Update() error {
 	}
 	if s.input.IsKeyJustPressed(ebiten.KeySpace) {
 		s.state.HardDrop()
+		s.manager.audioManager.PlayEffect(music.ExplosionEffect)
 	}
 	if s.input.IsKeyJustPressed(ebiten.KeyEscape) {
 		s.manager.SwitchTo(NewPauseScene(s.manager))
@@ -64,8 +66,8 @@ func (s *GameplayScene) Draw(screen *ebiten.Image) {
 
 	offsetX, offsetY := 4, 2
 	render.DrawBoard(screen, s.state.GetBoard(), offsetX, offsetY)
-	render.DrawPiece(screen, s.state.GetCurrentPiece(), offsetX, offsetY)
 	render.DrawPiece(screen, s.state.GetShadowPiece(), offsetX, offsetY)
+	render.DrawPiece(screen, s.state.GetCurrentPiece(), offsetX, offsetY)
 
 	font := render.GetDefaultFont(render.FontMedium)
 
@@ -78,9 +80,13 @@ func (s *GameplayScene) Draw(screen *ebiten.Image) {
 }
 
 func (s *GameplayScene) OnEnter() {
+	s.manager.audioManager.SetPlaylist(music.ReturnOfThe8BitEra, music.ArcadeBeat)
+	go s.manager.audioManager.StartAutoPlay()
 	s.state.Resume()
 }
 
 func (s *GameplayScene) OnExit() {
+	go s.manager.audioManager.StopAutoPlay()
+
 	s.state.Pause()
 }
