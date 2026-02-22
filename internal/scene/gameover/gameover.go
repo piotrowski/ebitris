@@ -1,40 +1,37 @@
-package scene
+package gameover
 
 import (
 	"fmt"
 
 	"github.com/hajimehoshi/ebiten/v2"
-	"github.com/piotrowski/ebitris/internal/input"
+	"github.com/piotrowski/ebitris/internal/pkg/event"
+	"github.com/piotrowski/ebitris/internal/pkg/input"
 	"github.com/piotrowski/ebitris/internal/render"
-	"github.com/piotrowski/ebitris/internal/ui"
 )
 
 type GameOverScene struct {
-	manager *Manager
-	input   *input.InputManager
-	score   int
-	level   int
-	lines   int
+	emitter event.Emitter
 
-	menu *ui.Menu
+	input *input.InputManager
+	score int
+	level int
+	lines int
+
+	menu *render.Menu
 
 	isInitialsModeActive bool
 	initials             string
-
-	scoreSaver ScoreManager
 }
 
-func NewGameOverScene(manager *Manager, score, level, lines int) *GameOverScene {
+func NewGameOverScene(emitter event.Emitter, score, level, lines int) *GameOverScene {
 	return &GameOverScene{
-		manager: manager,
+		emitter: emitter,
 		score:   score,
 		level:   level,
 		lines:   lines,
 		input:   input.NewInputManager(),
 
-		menu: ui.NewMenu([]string{"Save Score", "Restart", "Main Menu"}),
-
-		scoreSaver: manager.scoreManager,
+		menu: render.NewMenu([]string{"Save Score", "Restart", "Main Menu"}),
 	}
 }
 
@@ -48,9 +45,9 @@ func (s *GameOverScene) Update() error {
 		case 0:
 			s.isInitialsModeActive = true
 		case 1:
-			s.manager.SwitchTo(NewStandardGameplayScene(s.manager))
+			s.emitter.Emit(event.Event{Type: event.EventTypeStartGame})
 		case 2:
-			s.manager.SwitchTo(NewMainMenuScene(s.manager))
+			s.emitter.Emit(event.Event{Type: event.EventTypeMainMenu})
 		}
 	}
 
@@ -59,8 +56,8 @@ func (s *GameOverScene) Update() error {
 
 func (s *GameOverScene) initialsMode() error {
 	if s.input.IsKeyJustPressed(ebiten.KeyEnter) {
-		s.scoreSaver.SaveScore(s.initials, s.score, s.level, s.lines)
-		s.manager.SwitchTo(NewMainMenuScene(s.manager))
+		// s.scoreSaver.SaveScore(s.initials, s.score, s.level, s.lines)
+		s.emitter.Emit(event.Event{Type: event.EventTypeMainMenu})
 		return nil
 	}
 

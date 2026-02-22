@@ -1,29 +1,29 @@
-package scene
+package gameplay
 
 import (
 	"fmt"
 	"image/color"
 
 	"github.com/hajimehoshi/ebiten/v2"
-	"github.com/piotrowski/ebitris/internal/input"
-	"github.com/piotrowski/ebitris/internal/music"
+	"github.com/piotrowski/ebitris/internal/pkg/event"
+	"github.com/piotrowski/ebitris/internal/pkg/input"
 	"github.com/piotrowski/ebitris/internal/render"
 	"github.com/piotrowski/ebitris/internal/tetris"
 )
 
 type GameplayScene struct {
-	manager *Manager
+	emitter event.Emitter
 	state   *tetris.GameState
 	input   *input.InputManager
 }
 
-func NewStandardGameplayScene(manager *Manager) *GameplayScene {
-	return NewGameplayScene(manager, 10, 20)
+func NewStandardGameplayScene(emitter event.Emitter) *GameplayScene {
+	return NewGameplayScene(emitter, 10, 20)
 }
 
-func NewGameplayScene(manager *Manager, width, height int) *GameplayScene {
+func NewGameplayScene(emitter event.Emitter, width, height int) *GameplayScene {
 	return &GameplayScene{
-		manager: manager,
+		emitter: emitter,
 		state:   tetris.NewGameState(width, height),
 		input:   input.NewInputManager(),
 	}
@@ -44,15 +44,14 @@ func (s *GameplayScene) Update() error {
 	}
 	if s.input.IsKeyJustPressed(ebiten.KeySpace) {
 		s.state.HardDrop()
-		s.manager.audioManager.PlayEffect(music.ExplosionEffect)
 	}
 	if s.input.IsKeyJustPressed(ebiten.KeyEscape) {
-		s.manager.SwitchTo(NewPauseScene(s.manager))
+		s.emitter.Emit(event.Event{Type: event.EventTypePause})
 		return nil
 	}
 
 	if s.state.IsGameOver() {
-		s.manager.SwitchTo(NewGameOverScene(s.manager, s.state.GetScore(), s.state.GetLevel(), s.state.GetLinesCleared()))
+		s.emitter.Emit(event.Event{Type: event.EventTypeGameOver, Payload: map[string]int{"score": 123}})
 		return nil
 	}
 
@@ -80,13 +79,13 @@ func (s *GameplayScene) Draw(screen *ebiten.Image) {
 }
 
 func (s *GameplayScene) OnEnter() {
-	s.manager.audioManager.SetPlaylist(music.ReturnOfThe8BitEra, music.ArcadeBeat)
-	go s.manager.audioManager.StartAutoPlay()
+	// s.manager.audioManager.SetPlaylist(music.ReturnOfThe8BitEra, music.ArcadeBeat)
+	// go s.manager.audioManager.StartAutoPlay()
 	s.state.Resume()
 }
 
 func (s *GameplayScene) OnExit() {
-	go s.manager.audioManager.StopAutoPlay()
+	// go s.manager.audioManager.StopAutoPlay()
 
 	s.state.Pause()
 }

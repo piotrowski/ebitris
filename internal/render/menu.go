@@ -1,11 +1,10 @@
-package ui
+package render
 
 import (
 	"image/color"
 
 	"github.com/hajimehoshi/ebiten/v2"
-	"github.com/piotrowski/ebitris/internal/input"
-	"github.com/piotrowski/ebitris/internal/render"
+	"github.com/piotrowski/ebitris/internal/pkg/input"
 )
 
 type Menu struct {
@@ -36,10 +35,10 @@ func (m *Menu) Selected() int {
 
 // Draw renders the selection indicator and item labels starting at cell (x, y).
 func (m *Menu) Draw(screen *ebiten.Image, x, y int) {
-	render.DrawRectangle(screen, x-1, y+m.focus, 5, 1, color.RGBA{16, 16, 16, 255})
+	DrawRectangle(screen, x-1, y+m.focus, 5, 1, color.RGBA{16, 16, 16, 255})
 
-	fontMedium := render.GetDefaultFont(render.FontMedium)
+	fontMedium := GetDefaultFont(FontMedium)
 	for i, label := range m.items {
-		render.DrawText(screen, label, x, y+i, fontMedium)
+		DrawText(screen, label, x, y+i, fontMedium)
 	}
 }

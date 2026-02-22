@@ -1,39 +1,37 @@
-package scene
+package scoreboard
 
 import (
 	"fmt"
 
 	"github.com/hajimehoshi/ebiten/v2"
-	"github.com/piotrowski/ebitris/internal/input"
-	"github.com/piotrowski/ebitris/internal/persistence"
+	"github.com/piotrowski/ebitris/internal/pkg/event"
+	"github.com/piotrowski/ebitris/internal/pkg/input"
+	"github.com/piotrowski/ebitris/internal/pkg/persistence"
 	"github.com/piotrowski/ebitris/internal/render"
-	"github.com/piotrowski/ebitris/internal/ui"
 )
 
 var pageSize = 10
 
 type ScoreboardScene struct {
-	manager *Manager
+	emitter event.Emitter
 	input   *input.InputManager
-	menu    *ui.Menu
+	menu    *render.Menu
 
-	scoreManager ScoreManager
+	// scoreManager ScoreManager
 
 	currentPage  int
 	hasMorePages bool
 	scores       []persistence.ScoreEntry
 }
 
-func NewScoreboardScene(manager *Manager) *ScoreboardScene {
+func NewScoreboardScene(emitter event.Emitter) *ScoreboardScene {
 	s := &ScoreboardScene{
-		manager: manager,
+		emitter: emitter,
 		input:   input.NewInputManager(),
-		menu:    ui.NewMenu([]string{"Next Page", "Previous Page", "Back"}),
-
-		scoreManager: manager.scoreManager,
+		menu:    render.NewMenu([]string{"Next Page", "Previous Page", "Back"}),
 	}
 
-	s.scores, s.hasMorePages = s.scoreManager.GetPage(s.currentPage, pageSize)
+	// s.scores, s.hasMorePages = s.scoreManager.GetPage(s.currentPage, pageSize)
 	return s
 }
 
@@ -43,15 +41,15 @@ func (s *ScoreboardScene) Update() error {
 		case 0:
 			if s.hasMorePages {
 				s.currentPage++
-				s.scores, s.hasMorePages = s.scoreManager.GetPage(s.currentPage, pageSize)
+				// s.scores, s.hasMorePages = s.scoreManager.GetPage(s.currentPage, pageSize)
 			}
 		case 1:
 			if s.currentPage > 0 {
 				s.currentPage--
 			}
-			s.scores, s.hasMorePages = s.scoreManager.GetPage(s.currentPage, pageSize)
+			// s.scores, s.hasMorePages = s.scoreManager.GetPage(s.currentPage, pageSize)
 		case 2:
-			s.manager.SwitchTo(NewMainMenuScene(s.manager))
+			s.emitter.Emit(event.Event{Type: event.EventTypeMainMenu})
 		}
 	}
 

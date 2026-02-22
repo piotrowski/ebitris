@@ -1,39 +1,39 @@
-package scene
+package pause
 
 import (
 	"github.com/hajimehoshi/ebiten/v2"
-	"github.com/piotrowski/ebitris/internal/input"
+	"github.com/piotrowski/ebitris/internal/pkg/event"
+	"github.com/piotrowski/ebitris/internal/pkg/input"
 	"github.com/piotrowski/ebitris/internal/render"
-	"github.com/piotrowski/ebitris/internal/ui"
 )
 
 type PauseScene struct {
-	manager *Manager
+	emitter event.Emitter
 	input   *input.InputManager
-	menu    *ui.Menu
+	menu    *render.Menu
 }
 
-func NewPauseScene(manager *Manager) *PauseScene {
+func NewPauseScene(emitter event.Emitter) *PauseScene {
 	return &PauseScene{
-		manager: manager,
+		emitter: emitter,
 		input:   input.NewInputManager(),
-		menu:    ui.NewMenu([]string{"Resume", "Restart", "Main Menu"}),
+		menu:    render.NewMenu([]string{"Resume", "Restart", "Main Menu"}),
 	}
 }
 
 func (s *PauseScene) Update() error {
 	if s.input.IsKeyJustPressed(ebiten.KeyEscape) {
-		s.manager.SwitchBack()
+		s.emitter.Emit(event.Event{Type: event.EventTypeGoBack})
 	}
 
 	if s.menu.HandleInput(s.input) {
 		switch s.menu.Selected() {
 		case 0:
-			s.manager.SwitchBack()
+			s.emitter.Emit(event.Event{Type: event.EventTypeGoBack})
 		case 1:
-			s.manager.SwitchTo(NewStandardGameplayScene(s.manager))
+			s.emitter.Emit(event.Event{Type: event.EventTypeStartGame})
 		case 2:
-			s.manager.SwitchTo(NewMainMenuScene(s.manager))
+			s.emitter.Emit(event.Event{Type: event.EventTypeMainMenu})
 		}
 	}
 	return nil
