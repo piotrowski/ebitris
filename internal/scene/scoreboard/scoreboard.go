@@ -6,7 +6,7 @@ import (
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/piotrowski/ebitris/internal/pkg/event"
 	"github.com/piotrowski/ebitris/internal/pkg/input"
-	"github.com/piotrowski/ebitris/internal/pkg/persistence"
+	"github.com/piotrowski/ebitris/internal/pkg/score"
 	"github.com/piotrowski/ebitris/internal/render"
 )
 
@@ -17,21 +17,22 @@ type ScoreboardScene struct {
 	input   *input.InputManager
 	menu    *render.Menu
 
-	// scoreManager ScoreManager
+	scoreGetter score.Getter
 
 	currentPage  int
 	hasMorePages bool
-	scores       []persistence.ScoreEntry
+	scores       []score.ScoreEntry
 }
 
-func NewScoreboardScene(emitter event.Emitter) *ScoreboardScene {
+func NewScoreboardScene(emitter event.Emitter, scoreGetter score.Getter) *ScoreboardScene {
 	s := &ScoreboardScene{
-		emitter: emitter,
-		input:   input.NewInputManager(),
-		menu:    render.NewMenu([]string{"Next Page", "Previous Page", "Back"}),
+		emitter:     emitter,
+		scoreGetter: scoreGetter,
+		input:       input.NewInputManager(),
+		menu:        render.NewMenu([]string{"Next Page", "Previous Page", "Back"}),
 	}
 
-	// s.scores, s.hasMorePages = s.scoreManager.GetPage(s.currentPage, pageSize)
+	s.scores, s.hasMorePages = s.scoreGetter.GetPage(s.currentPage, pageSize)
 	return s
 }
 
@@ -41,13 +42,13 @@ func (s *ScoreboardScene) Update() error {
 		case 0:
 			if s.hasMorePages {
 				s.currentPage++
-				// s.scores, s.hasMorePages = s.scoreManager.GetPage(s.currentPage, pageSize)
+				s.scores, s.hasMorePages = s.scoreGetter.GetPage(s.currentPage, pageSize)
 			}
 		case 1:
 			if s.currentPage > 0 {
 				s.currentPage--
 			}
-			// s.scores, s.hasMorePages = s.scoreManager.GetPage(s.currentPage, pageSize)
+			s.scores, s.hasMorePages = s.scoreGetter.GetPage(s.currentPage, pageSize)
 		case 2:
 			s.emitter.Emit(event.Event{Type: event.EventTypeMainMenu})
 		}

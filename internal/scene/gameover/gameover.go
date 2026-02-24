@@ -9,8 +9,13 @@ import (
 	"github.com/piotrowski/ebitris/internal/render"
 )
 
+type scoreSaver interface {
+	SaveScore(string, int, int, int)
+}
+
 type GameOverScene struct {
-	emitter event.Emitter
+	emitter    event.Emitter
+	scoreSaver scoreSaver
 
 	input *input.InputManager
 	score int
@@ -23,13 +28,14 @@ type GameOverScene struct {
 	initials             string
 }
 
-func NewGameOverScene(emitter event.Emitter, score, level, lines int) *GameOverScene {
+func NewGameOverScene(emitter event.Emitter, scoreSaver scoreSaver, score, level, lines int) *GameOverScene {
 	return &GameOverScene{
-		emitter: emitter,
-		score:   score,
-		level:   level,
-		lines:   lines,
-		input:   input.NewInputManager(),
+		emitter:    emitter,
+		scoreSaver: scoreSaver,
+		score:      score,
+		level:      level,
+		lines:      lines,
+		input:      input.NewInputManager(),
 
 		menu: render.NewMenu([]string{"Save Score", "Restart", "Main Menu"}),
 	}
@@ -56,7 +62,7 @@ func (s *GameOverScene) Update() error {
 
 func (s *GameOverScene) initialsMode() error {
 	if s.input.IsKeyJustPressed(ebiten.KeyEnter) {
-		// s.scoreSaver.SaveScore(s.initials, s.score, s.level, s.lines)
+		s.scoreSaver.SaveScore(s.initials, s.score, s.level, s.lines)
 		s.emitter.Emit(event.Event{Type: event.EventTypeMainMenu})
 		return nil
 	}

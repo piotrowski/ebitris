@@ -3,11 +3,12 @@ package score
 import (
 	"encoding/json"
 	"os"
+	"path"
 	"slices"
 	"time"
 )
 
-const saveFile = "/usr/local/share/scores.json"
+const saveFile = ".ebitris/scores.json"
 
 type Getter interface {
 	GetPage(page, size int) ([]ScoreEntry, bool)
@@ -32,6 +33,10 @@ type ScoreManager struct {
 func NewScoreManager() *ScoreManager {
 	manager := &ScoreManager{
 		scores: []ScoreEntry{},
+	}
+
+	if err := ensureBaseDir(saveFile); err != nil {
+		panic(err)
 	}
 
 	if err := manager.loadScores(); err != nil {
@@ -83,10 +88,11 @@ func (sm *ScoreManager) saveScore() error {
 		return err
 	}
 
-	err = os.WriteFile(saveFile, jsonData, 0644)
+	err = os.WriteFile(saveFile, jsonData, 0o600)
 	if err != nil {
 		return err
 	}
+
 	return nil
 }
 
@@ -107,4 +113,13 @@ func (sm *ScoreManager) loadScores() error {
 	}
 	sm.scores = scores
 	return nil
+}
+
+func ensureBaseDir(fpath string) error {
+	baseDir := path.Dir(fpath)
+	info, err := os.Stat(baseDir)
+	if err == nil && info.IsDir() {
+		return nil
+	}
+	return os.MkdirAll(baseDir, 0o755)
 }

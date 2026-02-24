@@ -18,10 +18,14 @@ type eventManager interface {
 	event.Dispatcher
 }
 
+type scoreManager interface {
+	score.Getter
+	score.Saver
+}
 type ManagerV2 struct {
 	events       eventManager
 	sceneManager scene.Manager
-	scoreManager score.Saver
+	scoreManager scoreManager
 }
 
 func NewManagerV2() *ManagerV2 {
@@ -51,7 +55,7 @@ func (m *ManagerV2) subscribeNavigation() {
 	})
 
 	m.events.Subscribe(event.EventTypeScoreboard, func(e event.Event) {
-		m.sceneManager.SwitchTo(scoreboard.NewScoreboardScene(m.events))
+		m.sceneManager.SwitchTo(scoreboard.NewScoreboardScene(m.events, m.scoreManager))
 	})
 
 	m.events.Subscribe(event.EventTypePause, func(e event.Event) {
@@ -59,7 +63,7 @@ func (m *ManagerV2) subscribeNavigation() {
 	})
 
 	m.events.Subscribe(event.EventTypeGameOver, func(e event.Event) {
-		m.sceneManager.SwitchTo(gameover.NewGameOverScene(m.events, 0, 0, 0))
+		m.sceneManager.SwitchTo(gameover.NewGameOverScene(m.events, m.scoreManager, 0, 0, 0))
 	})
 
 	m.events.Subscribe(event.EventTypeQuit, func(e event.Event) {

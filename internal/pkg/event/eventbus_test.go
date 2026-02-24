@@ -95,6 +95,8 @@ func TestNoHandlerForType(t *testing.T) {
 }
 
 func TestQueueIsEmptyAfterDispatch(t *testing.T) {
+	t.Parallel()
+
 	bus := NewEventManager()
 
 	bus.Emit(Event{Type: EventTypeGameOver})
