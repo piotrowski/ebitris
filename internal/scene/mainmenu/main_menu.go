@@ -43,7 +43,5 @@ func (s *MenuScene) Draw(screen *ebiten.Image) {
 	s.menu.Draw(screen, 5, 10)
 }
 
-func (s *MenuScene) OnEnter() {
-	// s.manager.audioManager.PlaySong(music.ReturnOfThe8BitEra)
-}
-func (s *MenuScene) OnExit() {}
+func (s *MenuScene) OnEnter() {}
+func (s *MenuScene) OnExit()  {}

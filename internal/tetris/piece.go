@@ -37,8 +37,8 @@ var PieceColors = map[PieceColor]color.Color{
 }
 
 func GetPieceColor[T ~int](c T) color.Color {
-	if color, ok := PieceColors[PieceColor(c)]; ok {
-		return color
+	if col, ok := PieceColors[PieceColor(c)]; ok {
+		return col
 	}
 	return color.RGBA{R: 255, G: 255, B: 255, A: 255} // default to white for invalid colors
 }

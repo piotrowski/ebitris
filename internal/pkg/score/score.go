@@ -2,6 +2,7 @@ package score
 
 import (
 	"encoding/json"
+	"log/slog"
 	"os"
 	"path"
 	"slices"
@@ -53,6 +54,7 @@ func newScoreManagerAt(filePath string) *ScoreManager {
 }
 
 func (sm *ScoreManager) SaveScore(initials string, score, level, lines int) {
+	slog.Info("saving score", "subsystem", "score", "initials", initials, "score", score, "level", level, "lines", lines)
 	entry := ScoreEntry{
 		Initials: initials,
 		Score:    score,
@@ -63,7 +65,7 @@ func (sm *ScoreManager) SaveScore(initials string, score, level, lines int) {
 	sm.scores = append(sm.scores, entry)
 
 	if err := sm.saveScore(); err != nil {
-		panic(err)
+		slog.Error("failed to save score", "subsystem", "score", "err", err)
 	}
 }
 

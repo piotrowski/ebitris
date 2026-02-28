@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"fmt"
 	"io"
+	"log/slog"
 	"math/rand"
 
 	"github.com/hajimehoshi/ebiten/v2/audio"
@@ -44,6 +45,7 @@ func NewAudioManager() *AudioManager {
 	for name, raw := range songs {
 		data, err := decodeMP3(raw)
 		if err != nil {
+			slog.Error("failed to decode audio", "subsystem", "audio", "song", name, "err", err)
 			panic(err)
 		}
 		decodedSongs[name] = data
@@ -53,6 +55,7 @@ func NewAudioManager() *AudioManager {
 	for name, raw := range effects {
 		data, err := decodeMP3(raw)
 		if err != nil {
+			slog.Error("failed to decode audio", "subsystem", "audio", "effect", name, "err", err)
 			panic(err)
 		}
 		decodedEffects[name] = data
@@ -63,6 +66,7 @@ func NewAudioManager() *AudioManager {
 	for name, data := range decodedEffects {
 		p, err := audioCtx.NewPlayer(bytes.NewReader(data))
 		if err != nil {
+			slog.Error("failed to create effect player", "subsystem", "audio", "effect", name, "err", err)
 			panic(err)
 		}
 		effectPlayers[name] = p
@@ -102,6 +106,7 @@ func (m *AudioManager) PlayShuffle() {
 }
 
 func (m *AudioManager) PlaySong(name SongName) {
+	slog.Info("playing track", "subsystem", "audio", "song", name)
 	m.currentSong = name
 
 	if m.musicPlayer != nil {
@@ -109,9 +114,11 @@ func (m *AudioManager) PlaySong(name SongName) {
 	}
 
 	if err := m.loadTrack(name); err != nil {
+		slog.Error("failed to load track", "subsystem", "audio", "song", name, "err", err)
 		panic(err)
 	}
 	if err := m.musicPlayer.Rewind(); err != nil {
+		slog.Error("failed to rewind track", "subsystem", "audio", "song", name, "err", err)
 		panic(err)
 	}
 	m.musicPlayer.SetVolume(0.1)
@@ -145,18 +152,21 @@ func (m *AudioManager) PlayEffect(name EffectName) {
 	if !ok {
 		return
 	}
-	_ = p.Rewind()
+	if err := p.Rewind(); err != nil {
+		slog.Error("failed to rewind track", "subsystem", "audio", "effect", name, "err", err)
+	}
+
 	p.Play()
 }
 
 func decodeMP3(raw []byte) ([]byte, error) {
 	stream, err := mp3.DecodeWithSampleRate(samplingRate, bytes.NewReader(raw))
 	if err != nil {
-		return nil, fmt.Errorf("failed to decode mp3 file: %v", err)
+		return nil, fmt.Errorf("failed to decode mp3 file: %w", err)
 	}
 	data, err := io.ReadAll(stream)
 	if err != nil {
-		return nil, fmt.Errorf("failed to read mp3 file:%v", err)
+		return nil, fmt.Errorf("failed to read mp3 file: %w", err)
 	}
 	return data, nil
 }

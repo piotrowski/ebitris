@@ -63,6 +63,6 @@ func DrawText(screen *ebiten.Image, textToDraw string, x, y int, fontFace text.F
 	text.Draw(screen, textToDraw, fontFace, op)
 }
 
-func DrawRectangle(screen *ebiten.Image, x, y int, width, height int, color color.Color) {
-	vector.FillRect(screen, float32(x*BlockSize), float32(y*BlockSize), float32(width*BlockSize), float32(height*BlockSize), color, true)
+func DrawRectangle(screen *ebiten.Image, x, y, width, height int, col color.Color) {
+	vector.FillRect(screen, float32(x*BlockSize), float32(y*BlockSize), float32(width*BlockSize), float32(height*BlockSize), col, true)
 }

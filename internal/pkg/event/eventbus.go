@@ -1,5 +1,7 @@
 package event
 
+import "log/slog"
+
 type Event struct {
 	Type    EventType
 	Payload any
@@ -26,6 +28,7 @@ func (b *EventManager) Emit(e Event) {
 
 func (b *EventManager) Dispatch() {
 	for _, e := range b.queue {
+		slog.Debug("dispatching event", "subsystem", "event", "type", e.Type)
 		for _, h := range b.handlers[e.Type] {
 			h(e)
 		}

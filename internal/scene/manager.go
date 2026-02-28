@@ -1,7 +1,7 @@
 package scene
 
 import (
-	"log"
+	"log/slog"
 
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/piotrowski/ebitris/internal/pkg/audio"
@@ -80,7 +80,7 @@ func (m *Manager) subscribeNavigation() {
 	m.events.Subscribe(event.EventTypeGameOver, func(e event.Event) {
 		endScore, isOk := e.Payload.(event.GameOverPayload)
 		if !isOk {
-			log.Println("Something is wrong with GameOverPayload")
+			slog.Warn("unexpected GameOverPayload", "subsystem", "scene")
 		}
 		m.sceneManager.SwitchTo(gameover.NewGameOverScene(m.events, m.scoreManager, endScore.Score, endScore.Level, endScore.Lines))
 	})
