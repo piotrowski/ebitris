@@ -78,7 +78,7 @@ func (s *GameOverScene) initialsMode() error {
 	} else {
 		for _, key := range s.input.GetJustPressedKeys() {
 			if key >= ebiten.KeyA && key <= ebiten.KeyZ && len(s.initials) < 3 {
-				s.initials += string('A' + (key - ebiten.KeyA))
+				s.initials += string(rune('A' + (key - ebiten.KeyA)))
 			}
 		}
 	}

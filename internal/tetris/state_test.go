@@ -286,13 +286,13 @@ func TestRotate(t *testing.T) {
 			expectedRot:     1,
 		},
 		{
-			name:            "reverts rotation on top-wall collision",
+			name:            "wall-kick rotation on left-wall collision",
 			shape:           ShapeL,
-			startX:          -1,
-			startY:          -1,
+			startX:          1,
+			startY:          5,
 			startRot:        1,
-			expectedSuccess: false,
-			expectedRot:     1,
+			expectedSuccess: true,
+			expectedRot:     2,
 		},
 	}
 

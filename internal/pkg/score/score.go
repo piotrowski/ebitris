@@ -8,7 +8,7 @@ import (
 	"time"
 )
 
-const saveFile = ".ebitris/scores.json"
+const defaultSaveFile = ".ebitris/scores.json"
 
 type Getter interface {
 	GetPage(page, size int) ([]ScoreEntry, bool)
@@ -27,15 +27,21 @@ type ScoreEntry struct {
 }
 
 type ScoreManager struct {
-	scores []ScoreEntry
+	scores   []ScoreEntry
+	filePath string
 }
 
 func NewScoreManager() *ScoreManager {
+	return newScoreManagerAt(defaultSaveFile)
+}
+
+func newScoreManagerAt(filePath string) *ScoreManager {
 	manager := &ScoreManager{
-		scores: []ScoreEntry{},
+		scores:   []ScoreEntry{},
+		filePath: filePath,
 	}
 
-	if err := ensureBaseDir(saveFile); err != nil {
+	if err := ensureBaseDir(filePath); err != nil {
 		panic(err)
 	}
 
@@ -75,11 +81,11 @@ func (sm *ScoreManager) GetPage(page, size int) ([]ScoreEntry, bool) {
 	}
 
 	end := start + size
+	hasMore := end < len(sm.scores)
 	if end > len(sm.scores) {
 		end = len(sm.scores)
-		return sm.scores[start:end], false
 	}
-	return sm.scores[start:end], true
+	return sm.scores[start:end], hasMore
 }
 
 func (sm *ScoreManager) saveScore() error {
@@ -88,7 +94,7 @@ func (sm *ScoreManager) saveScore() error {
 		return err
 	}
 
-	err = os.WriteFile(saveFile, jsonData, 0o600)
+	err = os.WriteFile(sm.filePath, jsonData, 0o600)
 	if err != nil {
 		return err
 	}
@@ -97,7 +103,7 @@ func (sm *ScoreManager) saveScore() error {
 }
 
 func (sm *ScoreManager) loadScores() error {
-	jsonData, err := os.ReadFile(saveFile)
+	jsonData, err := os.ReadFile(sm.filePath)
 	if err != nil {
 		if os.IsNotExist(err) {
 			sm.scores = []ScoreEntry{}

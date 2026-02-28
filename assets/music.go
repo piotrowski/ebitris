@@ -12,3 +12,6 @@ var ArcadeBeat []byte
 
 //go:embed fx/u_b32baquv5u-8-bit-explosion-3-340456.mp3
 var ExplosionEffect []byte
+
+//go:embed fx/bip.mp3
+var BipEffect []byte

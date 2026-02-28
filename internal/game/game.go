@@ -8,7 +8,7 @@ import (
 )
 
 type Game struct {
-	manager *scene.ManagerV2
+	manager *scene.Manager
 }
 
 func (g *Game) Update() error {
@@ -27,7 +27,7 @@ func Start() error {
 	ebiten.SetWindowSize(600, 800)
 	ebiten.SetWindowTitle("Ebitris")
 
-	manager := scene.NewManagerV2()
+	manager := scene.NewManager()
 
 	if err := ebiten.RunGame(&Game{
 		manager: manager,

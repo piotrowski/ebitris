@@ -30,20 +30,27 @@ func NewGameplayScene(emitter event.Emitter, width, height int) *GameplayScene {
 }
 
 func (s *GameplayScene) Update() error {
+	var blockedMoved bool
 	if s.input.ShouldMove(ebiten.KeyLeft) {
-		s.state.MoveLeft()
+		blockedMoved = s.state.MoveLeft()
 	}
 	if s.input.ShouldMove(ebiten.KeyRight) {
-		s.state.MoveRight()
+		blockedMoved = s.state.MoveRight()
 	}
 	if s.input.IsKeyJustPressed(ebiten.KeyUp) {
-		s.state.Rotate()
+		blockedMoved = s.state.Rotate()
 	}
 	if s.input.ShouldMove(ebiten.KeyDown) {
-		s.state.MoveDown()
+		blockedMoved = s.state.MoveDown()
 	}
+
+	if blockedMoved {
+		s.emitter.Emit(event.Event{Type: event.EventTypeBlockMovedByPlayer})
+	}
+
 	if s.input.IsKeyJustPressed(ebiten.KeySpace) {
 		s.state.HardDrop()
+		s.emitter.Emit(event.Event{Type: event.EventTypeBlockPlaced})
 	}
 	if s.input.IsKeyJustPressed(ebiten.KeyEscape) {
 		s.emitter.Emit(event.Event{Type: event.EventTypePause})
@@ -51,7 +58,11 @@ func (s *GameplayScene) Update() error {
 	}
 
 	if s.state.IsGameOver() {
-		s.emitter.Emit(event.Event{Type: event.EventTypeGameOver, Payload: map[string]int{"score": 123}})
+		s.emitter.Emit(event.Event{Type: event.EventTypeGameOver, Payload: event.GameOverPayload{
+			Score: s.state.GetScore(),
+			Lines: s.state.GetLinesCleared(),
+			Level: s.state.GetLevel(),
+		}})
 		return nil
 	}
 
@@ -79,13 +90,9 @@ func (s *GameplayScene) Draw(screen *ebiten.Image) {
 }
 
 func (s *GameplayScene) OnEnter() {
-	// s.manager.audioManager.SetPlaylist(music.ReturnOfThe8BitEra, music.ArcadeBeat)
-	// go s.manager.audioManager.StartAutoPlay()
 	s.state.Resume()
 }
 
 func (s *GameplayScene) OnExit() {
-	// go s.manager.audioManager.StopAutoPlay()
-
 	s.state.Pause()
 }

@@ -1,4 +1,4 @@
-package music
+package audio
 
 import "github.com/piotrowski/ebitris/assets"
 
@@ -14,6 +14,7 @@ const (
 
 const (
 	ExplosionEffect EffectName = iota + 1
+	BipEffect
 )
 
 var songs map[SongName][]byte = map[SongName][]byte{
@@ -23,4 +24,5 @@ var songs map[SongName][]byte = map[SongName][]byte{
 
 var effects map[EffectName][]byte = map[EffectName][]byte{
 	ExplosionEffect: assets.ExplosionEffect,
+	BipEffect:       assets.BipEffect,
 }

@@ -1,7 +1,10 @@
 package scene
 
 import (
+	"log"
+
 	"github.com/hajimehoshi/ebiten/v2"
+	"github.com/piotrowski/ebitris/internal/pkg/audio"
 	"github.com/piotrowski/ebitris/internal/pkg/event"
 	"github.com/piotrowski/ebitris/internal/pkg/scene"
 	"github.com/piotrowski/ebitris/internal/pkg/score"
@@ -22,26 +25,38 @@ type scoreManager interface {
 	score.Getter
 	score.Saver
 }
-type ManagerV2 struct {
+
+type audioManager interface {
+	audio.EffectPlayer
+	audio.MusicPlayer
+	audio.AudioUpdater
+}
+
+type Manager struct {
 	events       eventManager
 	sceneManager scene.Manager
 	scoreManager scoreManager
+	audioManager audioManager
 }
 
-func NewManagerV2() *ManagerV2 {
-	m := &ManagerV2{
+func NewManager() *Manager {
+	m := &Manager{
 		events:       event.NewEventManager(),
 		sceneManager: scene.NewSceneManager(),
 		scoreManager: score.NewScoreManager(),
+		audioManager: audio.NewAudioManager(),
 	}
 
 	m.subscribeNavigation()
-	m.sceneManager.SwitchTo(menu.NewMenuScene(m.events))
+	m.subscribeMusic()
+	m.subscribeEffects()
+
+	m.events.Emit(event.Event{Type: event.EventTypeMainMenu})
 
 	return m
 }
 
-func (m *ManagerV2) subscribeNavigation() {
+func (m *Manager) subscribeNavigation() {
 	m.events.Subscribe(event.EventTypeGoBack, func(e event.Event) {
 		m.sceneManager.SwitchBack()
 	})
@@ -63,7 +78,11 @@ func (m *ManagerV2) subscribeNavigation() {
 	})
 
 	m.events.Subscribe(event.EventTypeGameOver, func(e event.Event) {
-		m.sceneManager.SwitchTo(gameover.NewGameOverScene(m.events, m.scoreManager, 0, 0, 0))
+		endScore, isOk := e.Payload.(event.GameOverPayload)
+		if !isOk {
+			log.Println("Something is wrong with GameOverPayload")
+		}
+		m.sceneManager.SwitchTo(gameover.NewGameOverScene(m.events, m.scoreManager, endScore.Score, endScore.Level, endScore.Lines))
 	})
 
 	m.events.Subscribe(event.EventTypeQuit, func(e event.Event) {
@@ -71,12 +90,45 @@ func (m *ManagerV2) subscribeNavigation() {
 	})
 }
 
-func (m *ManagerV2) Update() error {
-	err := m.sceneManager.Update()
-	m.events.Dispatch()
-	return err
+func (m *Manager) subscribeMusic() {
+	m.events.Subscribe(event.EventTypeStartGame, func(e event.Event) {
+		m.audioManager.StartPlaylist(audio.ArcadeBeat, audio.ReturnOfThe8BitEra)
+	})
+
+	m.events.Subscribe(event.EventTypeMainMenu, func(e event.Event) {
+		m.audioManager.StartPlaylist(audio.ArcadeBeat, audio.ReturnOfThe8BitEra)
+	})
+
+	m.events.Subscribe(event.EventTypeGameOver, func(e event.Event) {
+		m.audioManager.StartPlaylist(audio.ArcadeBeat, audio.ReturnOfThe8BitEra)
+	})
 }
 
-func (m *ManagerV2) Draw(screen *ebiten.Image) {
+func (m *Manager) subscribeEffects() {
+	m.events.Subscribe(event.EventTypeBlockPlaced, func(e event.Event) {
+		m.audioManager.PlayEffect(audio.ExplosionEffect)
+	})
+
+	m.events.Subscribe(event.EventTypeBlockMovedByPlayer, func(e event.Event) {
+		m.audioManager.PlayEffect(audio.BipEffect)
+	})
+}
+
+func (m *Manager) Update() error {
+	err := m.sceneManager.Update()
+	if err != nil {
+		return err
+	}
+
+	err = m.audioManager.Update()
+	if err != nil {
+		return err
+	}
+
+	m.events.Dispatch()
+	return nil
+}
+
+func (m *Manager) Draw(screen *ebiten.Image) {
 	m.sceneManager.Draw(screen)
 }

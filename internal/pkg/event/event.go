@@ -15,7 +15,8 @@ const (
 	EventTypePause
 	EventTypeQuit
 
-	EventTypeStartPlaylist
+	EventTypeBlockPlaced
+	EventTypeBlockMovedByPlayer
 )
 
 type Emitter interface {
@@ -33,4 +34,10 @@ type EmitterSubscriber interface {
 
 type Dispatcher interface {
 	Dispatch()
+}
+
+type GameOverPayload struct {
+	Score int
+	Lines int
+	Level int
 }
